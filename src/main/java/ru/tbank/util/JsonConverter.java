@@ -20,7 +20,7 @@ public class JsonConverter {
             log.debug("JSON Файл {} был успешно сконвертирован в POJO объект ({}).", file.getName(), pojoClass.getSimpleName());
             return pojo;
         } catch (IOException e) {
-            log.error("В процессе конвертации JSON файла в POJO объект класса {} произошла ошибка и он не был десериализован.",
+            log.warn("В процессе конвертации JSON файла в POJO объект класса {} произошла ошибка и он не был десериализован.",
                     pojoClass.getSimpleName(), e);
             return null;
         }

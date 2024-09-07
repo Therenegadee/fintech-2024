@@ -22,7 +22,7 @@ public class XmlConverter {
                     pojo.getClass().getSimpleName(), pathToFile + fileName);
             return file;
         } catch (Exception e) {
-            log.error("В процессе конвертации POJO объекта (класс {}) в XML файл произошла ошибка и объект не был сконвертирован.",
+            log.warn("В процессе конвертации POJO объекта (класс {}) в XML файл произошла ошибка и объект не был сконвертирован.",
                     pojo.getClass().getSimpleName(), e);
             return null;
         }
