@@ -1,4 +1,4 @@
-package ru.tbank.model;
+package ru.tbank.hw2.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
@@ -13,16 +13,14 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Coordinates {
-    @JsonProperty("lat")
-    @JacksonXmlProperty(localName = "latitude")
-    private double latitude;
-    @JsonProperty("lon")
-    @JacksonXmlProperty(localName = "longitude")
-    private double longitude;
+public class City {
+    private String slug; // ???
+    @JsonProperty("coords")
+    @JacksonXmlProperty(localName = "coordinates")
+    private Coordinates coordinates;
 
     @Override
     public String toString() {
-        return String.format("%s ш., %s д.", latitude, longitude);
+        return String.format("Город [Абберавиатура: %s; Координаты: %s.]", slug, coordinates);
     }
 }

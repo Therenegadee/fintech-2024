@@ -1,15 +1,15 @@
-package ru.tbank;
+package ru.tbank.hw2;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.tbank.model.City;
-import ru.tbank.util.JsonConverter;
-import ru.tbank.util.XmlConverter;
+import ru.tbank.hw2.model.City;
+import ru.tbank.hw2.util.JsonConverter;
+import ru.tbank.hw2.util.XmlConverter;
 
 import java.io.File;
 import java.util.Objects;
 
 @Slf4j
-public class Main {
+public class Hw2Main {
 
     public static void main(String[] args) {
         log.info("Начало работы приложения.");

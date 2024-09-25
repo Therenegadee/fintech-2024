@@ -1,4 +1,4 @@
-package ru.tbank.util;
+package ru.tbank.hw2.util;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import lombok.extern.slf4j.Slf4j;
