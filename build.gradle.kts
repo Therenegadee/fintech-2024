@@ -12,6 +12,7 @@ repositories {
 dependencies {
     // tests
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
+    testImplementation(project(mapOf("path" to ":")))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 
     // jackson
