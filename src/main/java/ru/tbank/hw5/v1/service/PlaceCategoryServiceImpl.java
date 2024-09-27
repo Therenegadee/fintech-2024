@@ -4,7 +4,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.tbank.hw5.annotation.ExecutionTimeObserved;
+import ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked;
 import ru.tbank.hw5.cache.PlaceCategoriesCache;
 import ru.tbank.hw5.client.KudaGoApiClient;
 import ru.tbank.hw5.dto.PlaceCategory;
@@ -12,13 +12,8 @@ import ru.tbank.hw5.exception.NotFoundException;
 import ru.tbank.hw5.service.PlaceCategoryService;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.locks.ReentrantLock;
 
-import static ru.tbank.hw5.client.KudaGoApiClient.API_SERVICE_NAME;
-
-@ExecutionTimeObserved
+@MethodExecutionTimeTracked
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -27,21 +22,6 @@ public class PlaceCategoryServiceImpl implements PlaceCategoryService {
     private final KudaGoApiClient kudaGoApiClient;
     private final PlaceCategoriesCache placeCategoriesCache;
 
-    @PostConstruct
-    private List<PlaceCategory> initCache() {
-        log.debug("Начало наполнения кэша категорий мест из сервиса {}.", API_SERVICE_NAME);
-        List<PlaceCategory> placeCategories = kudaGoApiClient.getAllPlaceCategories();
-        if (Objects.isNull(placeCategories)) {
-            String errorDetails = String.format("Полученный список категорий мест из сервиса %s был null!", API_SERVICE_NAME);
-            log.error(errorDetails);
-            throw new IllegalStateException(errorDetails);
-        }
-        placeCategoriesCache.saveAll(placeCategories);
-        log.debug("Кэш категорий мест из сервиса {} был успешно наполнен. Список полученных категорий мест содержал {} запись.", 
-                API_SERVICE_NAME, placeCategories.size());
-        return placeCategories;
-    }
-    
     @Override
     public List<PlaceCategory> getAllPlaceCategories() {
         log.info("Получение всех категорий мест из кэша.");

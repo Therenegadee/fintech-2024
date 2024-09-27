@@ -1,10 +1,9 @@
 package ru.tbank.hw5.v1.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.tbank.hw5.annotation.ExecutionTimeObserved;
+import ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked;
 import ru.tbank.hw5.cache.LocationCache;
 import ru.tbank.hw5.client.KudaGoApiClient;
 import ru.tbank.hw5.dto.Location;
@@ -12,12 +11,8 @@ import ru.tbank.hw5.exception.NotFoundException;
 import ru.tbank.hw5.service.LocationService;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
-import static ru.tbank.hw5.client.KudaGoApiClient.API_SERVICE_NAME;
-
-@ExecutionTimeObserved
+@MethodExecutionTimeTracked
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -25,21 +20,6 @@ public class LocationServiceImpl implements LocationService {
 
     private final KudaGoApiClient kudaGoApiClient;
     private final LocationCache locationCache;
-
-    @PostConstruct
-    private List<Location> initCache() {
-        log.debug("Начало наполнения кэша городов из сервиса {}.", API_SERVICE_NAME);
-        List<Location> locations = kudaGoApiClient.getAllLocations();
-        if (Objects.isNull(locations)) {
-            String errorDetails = String.format("Полученный список городов из сервиса %s был null!", API_SERVICE_NAME);
-            log.error(errorDetails);
-            throw new IllegalStateException(errorDetails);
-        }
-        locationCache.saveAll(locations);
-        log.debug("Кэш городов из сервиса {} был успешно наполнен. Список полученных городов содержал {} запись.",
-                API_SERVICE_NAME, locations.size());
-        return locations;
-    }
 
     @Override
     public List<Location> getAllLocations() {

@@ -3,13 +3,13 @@ package ru.tbank.hw5.v1.contoller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.tbank.hw5.annotation.ExecutionTimeObserved;
+import ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked;
 import ru.tbank.hw5.dto.PlaceCategory;
 import ru.tbank.hw5.service.PlaceCategoryService;
 
 import static ru.tbank.hw5.v1.contoller.ControllerConstants.API_ROOT_PATH;
 
-@ExecutionTimeObserved
+@MethodExecutionTimeTracked
 @RestController
 @RequestMapping(API_ROOT_PATH + "/places/categories")
 @RequiredArgsConstructor

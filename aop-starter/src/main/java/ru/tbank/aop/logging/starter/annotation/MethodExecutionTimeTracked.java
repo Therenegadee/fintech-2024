@@ -1,4 +1,4 @@
-package ru.tbank.hw5.annotation;
+package ru.tbank.aop.logging.starter.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,5 +7,5 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExecutionTimeObserved {
+public @interface MethodExecutionTimeTracked {
 }

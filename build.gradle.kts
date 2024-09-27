@@ -28,6 +28,7 @@ dependencies {
 
     // aop
     implementation("org.springframework.boot:spring-boot-starter-aop")
+    implementation(project(":aop-starter"))
 
     // tests
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
