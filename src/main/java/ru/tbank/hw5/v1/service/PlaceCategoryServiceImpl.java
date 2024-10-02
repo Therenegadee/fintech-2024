@@ -19,14 +19,7 @@ import java.util.List;
 @Slf4j
 public class PlaceCategoryServiceImpl implements PlaceCategoryService {
 
-    private final KudaGoApiClient kudaGoApiClient;
     private final PlaceCategoriesCache placeCategoriesCache;
-
-    @Override
-    public List<PlaceCategory> getAllPlaceCategories() {
-        log.info("Получение всех категорий мест из кэша.");
-        return placeCategoriesCache.findAll();
-    }
 
     @Override
     public void saveAll(List<PlaceCategory> placeCategories) {

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LocationService {
-    List<Location> getAllLocations();
 
     void saveAll(List<Location> locations);
 

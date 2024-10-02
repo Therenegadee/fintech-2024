@@ -23,7 +23,7 @@ public class LocationCache extends DataCache<Location, String> {
     @Override
     public void saveAll(List<Location> locations) {
         log.info("Сохранение списка городов в кэш.");
-        locations.forEach(location -> cache.put(location.getSlug(), location));
+        locations.forEach(this::save);
         log.info("Список городов успешно сохранен в кэш.");
     }
 
@@ -101,5 +101,10 @@ public class LocationCache extends DataCache<Location, String> {
         } finally {
             LOCK.unlock();
         }
+    }
+
+    @Override
+    public void clearCache() {
+        cache.clear();
     }
 }
