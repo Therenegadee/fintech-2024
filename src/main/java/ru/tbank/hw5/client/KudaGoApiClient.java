@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked;
 import ru.tbank.hw5.dto.Location;
@@ -65,7 +66,7 @@ public class KudaGoApiClient {
             }
             log.debug("Кол-во полученных категорий мест из сервиса {}: {}.", API_SERVICE_NAME, placeCategories.length);
             return Arrays.stream(placeCategories).toList();
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             String errorMessage = String.format("В ходе получения категорий мест из сервиса %s произошла ошибка. Причина: %s.\nStackTrace: %s",
                     API_SERVICE_NAME, ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e));
             log.error(errorMessage);
@@ -87,7 +88,7 @@ public class KudaGoApiClient {
             }
             log.debug("Кол-во полученных городов из сервиса {}: {}.", API_SERVICE_NAME, locations.length);
             return Arrays.stream(locations).toList();
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             String errorMessage = String.format("В ходе получения городов из сервиса %s произошла ошибка. Причина: %s.\nStackTrace: %s",
                     API_SERVICE_NAME, ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e));
             log.error(errorMessage);

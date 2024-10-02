@@ -20,7 +20,7 @@ public class LocationCache extends DataCache<Location, String> {
     @Override
     public void saveAll(List<Location> locations) {
         log.info("Сохранение списка городов в кэш.");
-        locations.forEach(location -> cache.put(location.getSlug(), location));
+        locations.forEach(this::save);
         log.info("Список городов успешно сохранен в кэш.");
     }
 
@@ -60,7 +60,7 @@ public class LocationCache extends DataCache<Location, String> {
     public Location update(String slug, Location updatedLocation) {
         log.info("Обновление города со slug \"{}\" в кэше.", slug);
         if (!cache.containsKey(slug)) {
-            String errorMessage = String.format("Города со slug \"{}\" не существует в кэше!", slug);
+            String errorMessage = String.format("Города со slug \"%s\" не существует в кэше!", slug);
             log.error(errorMessage);
             throw new IllegalArgumentException(errorMessage);
         }
@@ -82,5 +82,10 @@ public class LocationCache extends DataCache<Location, String> {
         }
         cache.remove(slug);
         log.info("Город со slug \"{}\" был успешно удален из кэша.", slug);
+    }
+
+    @Override
+    public void clearCache() {
+        cache.clear();
     }
 }

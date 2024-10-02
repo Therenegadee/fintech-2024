@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @MethodExecutionTimeTracked
@@ -26,7 +27,7 @@ public class PlaceCategoriesCache extends DataCache<PlaceCategory, Integer> {
     @Override
     public void saveAll(List<PlaceCategory> placeCategories) {
         log.info("Сохранение списка категорий мест в кэш.");
-        placeCategories.forEach(category -> cache.put(category.getId(), category));
+        placeCategories.forEach(this::save);
         log.info("Список категорий мест успешно сохранен в кэш.");
     }
 
@@ -87,5 +88,10 @@ public class PlaceCategoriesCache extends DataCache<PlaceCategory, Integer> {
         }
         cache.remove(id);
         log.info("Категория места с идентификатором \"{}\" была успешно удалена из кэша.", id);
+    }
+
+    @Override
+    public void clearCache() {
+        cache.clear();
     }
 }

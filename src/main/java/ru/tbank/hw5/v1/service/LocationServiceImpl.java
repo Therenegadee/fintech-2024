@@ -18,14 +18,7 @@ import java.util.List;
 @Slf4j
 public class LocationServiceImpl implements LocationService {
 
-    private final KudaGoApiClient kudaGoApiClient;
     private final LocationCache locationCache;
-
-    @Override
-    public List<Location> getAllLocations() {
-        log.info("Получение всех городов из кэша.");
-        return locationCache.findAll();
-    }
 
     @Override
     public void saveAll(List<Location> locations) {

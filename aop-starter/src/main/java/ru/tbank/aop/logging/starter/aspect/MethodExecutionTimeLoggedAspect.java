@@ -15,7 +15,7 @@ import org.springframework.util.StopWatch;
 public class MethodExecutionTimeLoggedAspect {
     @Around("execution(* *(..)) && (@within(ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked) " +
             "|| @annotation(ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked))")
-    public Object profileAllMethods(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
+    public Object measureMethodsExecutionTime(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 
         String className = methodSignature.getDeclaringType().getSimpleName();

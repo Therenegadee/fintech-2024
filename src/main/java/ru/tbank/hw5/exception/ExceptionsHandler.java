@@ -45,7 +45,17 @@ public class ExceptionsHandler {
                 .body(new ErrorResponseMessage(
                         ExceptionUtils.getMessage(e).isEmpty()
                                 ? "Запрошенный ресурс не был найден."
-                                : e.getMessage(),
+                                : ExceptionUtils.getMessage(e),
+                        ExceptionUtils.getStackTrace(e)));
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<?> handleBadRequestException(BadRequestException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseMessage(
+                        ExceptionUtils.getMessage(e).isEmpty()
+                                ? "Были переданы некорректные параметры или необходимые параметры не были переданы вовсе."
+                                : ExceptionUtils.getMessage(e),
                         ExceptionUtils.getStackTrace(e)));
     }
 
