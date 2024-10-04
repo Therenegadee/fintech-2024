@@ -3,6 +3,9 @@ package ru.tbank.hw5.cache;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked;
 import ru.tbank.hw5.client.KudaGoApiClient;
@@ -26,8 +29,8 @@ public class CacheInitializer {
     private final PlaceCategoryService placeCategoryService;
     private final KudaGoApiClient kudaGoApiClient;
 
-    @PostConstruct
-    private List<Location> initLocationCache() {
+    @EventListener(ApplicationStartedEvent.class)
+    protected List<Location> initLocationCache() {
         log.debug("Начало наполнения кэша городов из сервиса {}.", API_SERVICE_NAME);
         List<Location> locations = kudaGoApiClient.getAllLocations();
         if (Objects.isNull(locations)) {
@@ -41,8 +44,8 @@ public class CacheInitializer {
         return locations;
     }
 
-    @PostConstruct
-    private List<PlaceCategory> initPlaceCategoriesCache() {
+    @EventListener(ApplicationStartedEvent.class)
+    protected List<PlaceCategory> initPlaceCategoriesCache() {
         log.debug("Начало наполнения кэша категорий мест из сервиса {}.", API_SERVICE_NAME);
         List<PlaceCategory> placeCategories = kudaGoApiClient.getAllPlaceCategories();
         if (Objects.isNull(placeCategories)) {

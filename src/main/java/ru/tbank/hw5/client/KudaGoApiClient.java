@@ -5,11 +5,13 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked;
 import ru.tbank.hw5.dto.Location;
 import ru.tbank.hw5.dto.PlaceCategory;
@@ -17,14 +19,15 @@ import ru.tbank.hw5.exception.IntegrationException;
 import ru.tbank.hw5.exception.RestTemplateResponseErrorHandler;
 import ru.tbank.hw5.interceptor.RestClientLoggingRequestInterceptor;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 @MethodExecutionTimeTracked
 @Service
-@Slf4j
 @RequiredArgsConstructor
+@Slf4j
 public class KudaGoApiClient {
 
     public static final String API_SERVICE_NAME = "KudaGo";
@@ -35,29 +38,19 @@ public class KudaGoApiClient {
     @Value("${kudago-api.locations-path}")
     private String locationsPath;
 
-    private final RestTemplateResponseErrorHandler responseErrorHandler;
-    private final RestClientLoggingRequestInterceptor requestLoggingInterceptor;
+    private final RestTemplate restTemplate;
 
-    private final RestTemplateBuilder restTemplateBuilder;
-
-    private RestTemplate restTemplate;
-
-    @PostConstruct
-    private RestTemplate getRestTemplate() {
-        restTemplate = restTemplateBuilder
-                .rootUri(baseUrl)
-                .interceptors(requestLoggingInterceptor)
-                .errorHandler(responseErrorHandler)
-                .build();
-        return restTemplate;
-    }
 
     @Nullable
     public List<PlaceCategory> getAllPlaceCategories() {
         try {
             log.debug("Получение категорий мест из сервиса {}.", API_SERVICE_NAME);
+            URI uri = UriComponentsBuilder.fromUriString(baseUrl)
+                    .path(placeCategoriesPath)
+                    .build()
+                    .toUri();
             ResponseEntity<PlaceCategory[]> response = restTemplate
-                    .getForEntity(placeCategoriesPath, PlaceCategory[].class);
+                    .getForEntity(uri, PlaceCategory[].class);
             PlaceCategory[] placeCategories = response.getBody();
             if (Objects.isNull(placeCategories)) {
                 log.error("Полученный список категорий мест из сервиса {} был null!", API_SERVICE_NAME);
@@ -78,8 +71,12 @@ public class KudaGoApiClient {
     public List<Location> getAllLocations() {
         try {
             log.debug("Получение городов из сервиса {}.", API_SERVICE_NAME);
+            URI uri = UriComponentsBuilder.fromUriString(baseUrl)
+                    .path(locationsPath)
+                    .build()
+                    .toUri();
             ResponseEntity<Location[]> response = restTemplate
-                    .getForEntity(locationsPath, Location[].class);
+                    .getForEntity(uri, Location[].class);
             Location[] locations = response.getBody();
             if (Objects.isNull(locations)) {
                 log.error("Полученный список городов из сервиса {} был null!", API_SERVICE_NAME);

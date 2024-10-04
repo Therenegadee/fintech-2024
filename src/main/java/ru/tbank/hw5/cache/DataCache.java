@@ -7,18 +7,18 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public abstract class DataCache<T, ID> {
+public abstract class DataCache<V, K> {
 
-    protected final ConcurrentHashMap<ID, T> cache = new ConcurrentHashMap<>();
+    protected final ConcurrentHashMap<K, V> cache = new ConcurrentHashMap<>();
 
-    abstract void saveAll(List<T> data);
+    abstract void saveAll(List<V> data);
 
-    abstract List<T> findAll();
+    abstract List<V> findAll();
 
-    abstract Optional<T> findById(ID id);
+    abstract Optional<V> findById(K id);
 
-    abstract T save(T data);
+    abstract V save(V data);
 
-    abstract T update(ID id, T data);
-    abstract void delete(ID id);
+    abstract V update(K id, V data);
+    abstract void delete(K id);
 }
