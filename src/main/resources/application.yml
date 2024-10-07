@@ -1,0 +1,7 @@
+server:
+  port: 8080
+
+kudago-api:
+  base-url: "https://kudago.com/public-api/v1.4"
+  categories-path: "/place-categories"
+  locations-path: "/locations"
