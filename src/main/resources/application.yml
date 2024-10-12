@@ -5,3 +5,9 @@ kudago-api:
   base-url: "https://kudago.com/public-api/v1.4"
   categories-path: "/place-categories"
   locations-path: "/locations"
+  statistics:
+    avg-response-time-ms: 450
+    avg-processing-response-time-ms: 200
+
+resources:
+  available-cores: 2

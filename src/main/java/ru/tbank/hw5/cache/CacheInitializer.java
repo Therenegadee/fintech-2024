@@ -1,9 +1,7 @@
 package ru.tbank.hw5.cache;
 
-import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -16,11 +14,12 @@ import ru.tbank.hw5.service.PlaceCategoryService;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static ru.tbank.hw5.client.KudaGoApiClient.API_SERVICE_NAME;
 
 @MethodExecutionTimeTracked
-@RequiredArgsConstructor
 @Component
 @Slf4j
 public class CacheInitializer {
@@ -28,9 +27,28 @@ public class CacheInitializer {
     private final LocationService locationService;
     private final PlaceCategoryService placeCategoryService;
     private final KudaGoApiClient kudaGoApiClient;
+    private final ScheduledExecutorService scheduledExecutorService;
+    private final ExecutorService fixedThreadPoolExecutorService;
+
+    public CacheInitializer(LocationService locationService,
+                            PlaceCategoryService placeCategoryService,
+                            KudaGoApiClient kudaGoApiClient,
+                            @Qualifier("kudaGoApiScheduledThreadPoolExecutorService") ScheduledExecutorService scheduledExecutorService,
+                            @Qualifier("kudaGoApiFixedThreadPoolExecutorService") ExecutorService fixedThreadPoolExecutorService) {
+        this.locationService = locationService;
+        this.placeCategoryService = placeCategoryService;
+        this.kudaGoApiClient = kudaGoApiClient;
+        this.scheduledExecutorService = scheduledExecutorService;
+        this.fixedThreadPoolExecutorService = fixedThreadPoolExecutorService;
+    }
 
     @EventListener(ApplicationStartedEvent.class)
-    protected List<Location> initLocationCache() {
+    protected void scheduleCacheDataUpdate() {
+        scheduledExecutorService.schedule()
+    }
+
+    @EventListener(ApplicationStartedEvent.class)
+    protected List<Location> fillLocationsCache() {
         log.debug("Начало наполнения кэша городов из сервиса {}.", API_SERVICE_NAME);
         List<Location> locations = kudaGoApiClient.getAllLocations();
         if (Objects.isNull(locations)) {
@@ -45,7 +63,7 @@ public class CacheInitializer {
     }
 
     @EventListener(ApplicationStartedEvent.class)
-    protected List<PlaceCategory> initPlaceCategoriesCache() {
+    protected List<PlaceCategory> fillPlaceCategoriesCache() {
         log.debug("Начало наполнения кэша категорий мест из сервиса {}.", API_SERVICE_NAME);
         List<PlaceCategory> placeCategories = kudaGoApiClient.getAllPlaceCategories();
         if (Objects.isNull(placeCategories)) {
