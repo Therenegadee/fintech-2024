@@ -1,4 +1,4 @@
-package hw5.v1.service;
+package ru.tbank.hw5.v1.service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

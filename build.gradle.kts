@@ -16,6 +16,10 @@ val apacheCommonsVersion = "3.17.0"
 val wiremockStandaloneVersion = "3.6.0"
 val wiremockTestcontainersVersion = "1.0-alpha-13"
 val testContainersVersion = "1.20.2"
+val caffeineCacheVersion = "3.1.8"
+val resilience4jCircuitBreakerVersion = "2.2.0"
+val resilience4jSpringVersion = "2.2.0"
+val springDocVersion = "2.6.0"
 
 repositories {
     mavenCentral()
@@ -43,7 +47,6 @@ dependencies {
     testImplementation("org.wiremock:wiremock-standalone:$wiremockStandaloneVersion")
     testImplementation("org.wiremock.integrations.testcontainers:wiremock-testcontainers-module:$wiremockTestcontainersVersion")
 
-
     // jackson
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
 
@@ -58,6 +61,23 @@ dependencies {
 
     // utils
     implementation("org.apache.commons:commons-lang3:$apacheCommonsVersion")
+
+    // cache
+    implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("com.github.ben-manes.caffeine:caffeine:$caffeineCacheVersion")
+
+    // validation
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // resilience4j
+    implementation("io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jCircuitBreakerVersion")
+    implementation("io.github.resilience4j:resilience4j-spring-boot3:$resilience4jSpringVersion")
+
+    // springdoc
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
+
+    // metrics
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
 
 tasks.getByName<Test>("test") {

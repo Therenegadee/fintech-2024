@@ -1,4 +1,4 @@
-package hw5.cache;
+package ru.tbank.hw5.cache;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

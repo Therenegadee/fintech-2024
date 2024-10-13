@@ -1,3 +1,31 @@
+spring:
+  cache:
+    cache-names: currencies-rates
+    caffeine:
+      spec: expireAfterAccess=1h
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        failureRateThreshold: 60
+        minimumNumberOfCalls: 5
+        registerHealthIndicator: true
+        permittedNumberOfCallsInHalfOpenState: 10
+    instances:
+      central-bank-client:
+        baseConfig: default
+        waitDurationInOpenState: 20s
+
 kudago-api:
   categories-path: "/place-categories"
   locations-path: "/locations"
+
+cbr-api:
+  currency:
+    codes:
+      path: /scripts/XML_valFull.asp
+    daily-exchange-rates:
+      path: /scripts/XML_daily.asp
+      date-param: date_req
