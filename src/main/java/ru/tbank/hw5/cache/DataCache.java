@@ -21,4 +21,6 @@ public abstract class DataCache<V, K> {
 
     abstract V update(K id, V data);
     abstract void delete(K id);
+
+    abstract void clearCache();
 }
