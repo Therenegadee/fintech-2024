@@ -1,6 +1,7 @@
 plugins {
     id("org.springframework.boot") version "3.3.3"
     id("java")
+    jacoco
 }
 
 group = "ru.tbank"
@@ -12,6 +13,9 @@ val lombokVersion = "1.18.34"
 val junitVersion = "5.8.1"
 val log4jVersion = "2.20.0"
 val apacheCommonsVersion = "3.17.0"
+val wiremockStandaloneVersion = "3.6.0"
+val wiremockTestcontainersVersion = "1.0-alpha-13"
+val testContainersVersion = "1.20.2"
 
 repositories {
     mavenCentral()
@@ -34,6 +38,11 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation(project(mapOf("path" to ":")))
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+    testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.wiremock:wiremock-standalone:$wiremockStandaloneVersion")
+    testImplementation("org.wiremock.integrations.testcontainers:wiremock-testcontainers-module:$wiremockTestcontainersVersion")
+
 
     // jackson
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion")
@@ -48,7 +57,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
 
     // utils
-    compileOnly("org.apache.commons:commons-lang3:$apacheCommonsVersion")
+    implementation("org.apache.commons:commons-lang3:$apacheCommonsVersion")
 }
 
 tasks.getByName<Test>("test") {
@@ -57,4 +66,23 @@ tasks.getByName<Test>("test") {
 
 tasks.withType(JavaCompile::class) {
     options.compilerArgs.add("-parameters")
+}
+
+tasks.test {
+    finalizedBy(tasks.jacocoTestReport)
+}
+
+tasks.getByName<JacocoReport>("jacocoTestReport") {
+    dependsOn(tasks.test)
+    afterEvaluate {
+        classDirectories = files(classDirectories.files.map {
+            fileTree(it) {
+                exclude(
+                    "**/hw2/**", "**/hw3/**",
+                    "**/hw5/dto/**",
+                    "**/tbank/datastructure/**"
+                )
+            }
+        })
+    }
 }

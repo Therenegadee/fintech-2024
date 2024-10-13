@@ -1,0 +1,3 @@
+kudago-api:
+  categories-path: "/place-categories"
+  locations-path: "/locations"
