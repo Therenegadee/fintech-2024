@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.common.ContentTypes;
 import com.github.tomakehurst.wiremock.common.Json;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -12,21 +13,26 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.StopWatch;
+import org.springframework.web.client.RestTemplate;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.wiremock.integrations.testcontainers.WireMockContainer;
 import ru.tbank.HomeworkApplication;
 import ru.tbank.hw5.cache.CacheInitializer;
 import ru.tbank.hw5.client.KudaGoApiClient;
+import ru.tbank.hw5.dto.KudaGoEventResponse;
 import ru.tbank.hw5.dto.Location;
 import ru.tbank.hw5.dto.PlaceCategory;
 import ru.tbank.hw5.exception.BadRequestException;
@@ -35,16 +41,27 @@ import ru.tbank.hw5.exception.NotFoundException;
 import ru.tbank.hw5.exception.RestTemplateResponseErrorHandler;
 import ru.tbank.hw5.interceptor.RestClientLoggingRequestInterceptor;
 
+import java.net.URI;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.testcontainers.shaded.com.google.common.base.CharMatcher.any;
 
 @SpringBootTest(classes = HomeworkApplication.class, webEnvironment = RANDOM_PORT)
 @TestPropertySource(locations = "classpath:application-test.yml")
@@ -57,6 +74,8 @@ public class KudaGoApiClientTest {
 
     @Autowired
     private KudaGoApiClient kudaGoApiClient;
+    @SpyBean(proxyTargetAware = false)
+    private RestTemplate restTemplate;
     @Autowired
     private RestTemplateResponseErrorHandler responseErrorHandler;
     @Autowired
@@ -66,6 +85,10 @@ public class KudaGoApiClientTest {
     private String placeCategoriesPath;
     @Value("${kudago-api.locations-path}")
     private String locationsPath;
+    @Value("${kudago-api.events-path}")
+    private String eventsPath;
+    @Value("${kudago-api.parallel-requests.number}")
+    private int parallelRequestNumber;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -210,5 +233,55 @@ public class KudaGoApiClientTest {
         // Assert
         assertThatThrownBy(() -> kudaGoApiClient.getAllPlaceCategories())
                 .isInstanceOf(expectedException.getClass());
+    }
+
+    @Test
+    void testGetEvents_numberOfThreadsIsTwoTimesBiggerThanParallelRequestsAllowed_semaphoreWorksCorrectly() throws InterruptedException {
+        // Given
+        KudaGoEventResponse sampleResponse = KudaGoEventResponse.builder()
+                .events(List.of(
+                                KudaGoEventResponse.EventDTO.builder()
+                                        .id(1L)
+                                        .title("Title")
+                                        .price("123")
+                                        .isFree(false)
+                                        .build()
+                        )
+                )
+                .build();
+        long dateFromTimestamp = 1L;
+        long dateToTimestamp = 2L;
+        stubFor(get(urlPathMatching("^/events(\\?.*)?$"))
+                .willReturn(aResponse()
+                        .withStatus(HttpStatus.OK.value())
+                        .withHeader(HttpHeaders.CONTENT_TYPE, ContentTypes.APPLICATION_JSON)
+                        .withBody(Json.write(sampleResponse))
+                ));
+        int numberOfThreads = parallelRequestNumber * 2;
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        CountDownLatch latch = new CountDownLatch(parallelRequestNumber);
+
+        // When
+        for (int i = 0; i < numberOfThreads; i++) {
+            int finalI = i;
+            executorService.submit(() -> {
+                try {
+                    if (finalI >= parallelRequestNumber) {
+                        Thread.sleep(Duration.ofSeconds(1L));
+                    }
+                    kudaGoApiClient.getEvents(dateFromTimestamp, dateToTimestamp);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+        executorService.shutdown();
+
+        // Then
+        verify(restTemplate, times(parallelRequestNumber))
+                .getForEntity(ArgumentMatchers.any(URI.class), ArgumentMatchers.eq(KudaGoEventResponse.class));
     }
 }

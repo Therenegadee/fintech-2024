@@ -33,6 +33,7 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude(mapOf("group" to "org.junit.vintage", "module" to "junit-vintage-engine"))
     }
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
 
     // aop
     implementation("org.springframework.boot:spring-boot-starter-aop")
@@ -78,6 +79,10 @@ dependencies {
 
     // metrics
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    // mapstruct
+    implementation("org.mapstruct:mapstruct:1.6.2")
+    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.2")
 }
 
 tasks.getByName<Test>("test") {

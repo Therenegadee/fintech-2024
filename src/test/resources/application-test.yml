@@ -21,6 +21,12 @@ resilience4j:
 kudago-api:
   categories-path: "/place-categories"
   locations-path: "/locations"
+  events-path: "/events"
+  fill-cache:
+    schedule: 3600
+  parallel-requests:
+    number: 5
+    fair-access: true
 
 cbr-api:
   currency:

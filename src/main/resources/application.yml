@@ -9,10 +9,21 @@ spring:
     caffeine:
       spec: expireAfterAccess=1h
 
+logging:
+  level:
+    root: debug
+
 kudago-api:
   base-url: "https://kudago.com/public-api/v1.4"
   categories-path: "/place-categories"
   locations-path: "/locations"
+  events-path: "/events"
+  fill-cache:
+    schedule: 3600
+  parallel-requests:
+    number: 5
+    fair-access: true
+
 cbr-api:
   base-url: http://www.cbr.ru
   currency:
@@ -21,6 +32,11 @@ cbr-api:
     daily-exchange-rates:
       path: /scripts/XML_daily.asp
       date-param: date_req
+
+executors:
+  threads-num:
+    scheduled: 2
+    fixed: 2
 
 resilience4j:
   circuitbreaker:
