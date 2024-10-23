@@ -4,6 +4,18 @@ server:
 spring:
   application:
     name: homework-app
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/service_db
+    username: t-fintech
+    password: t-fintech
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/master.xml
   cache:
     cache-names: currencies-rates
     caffeine:
@@ -11,7 +23,10 @@ spring:
 
 logging:
   level:
-    root: debug
+    root: info
+    org.hibernate:
+      SQL: debug
+      type.descriptor.sql.BasicBinder: warn
 
 kudago-api:
   base-url: "https://kudago.com/public-api/v1.4"

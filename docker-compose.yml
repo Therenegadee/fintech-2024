@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  service-db:
+    image: postgres:13-alpine
+    container_name: service-db
+    environment:
+      - POSTGRES_DB=service_db
+      - POSTGRES_USER=t-fintech
+      - POSTGRES_PASSWORD=t-fintech
+    ports:
+      - "5432:5432"

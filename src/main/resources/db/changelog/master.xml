@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.21.xsd">
+
+    <include file="2024-10-23--01-init-service-schema.sql" relativeToChangelogFile="true"/>
+    <include file="2024-10-23--02-init-places-table.sql" relativeToChangelogFile="true"/>
+    <include file="2024-10-23--03-init-events-table.sql" relativeToChangelogFile="true"/>
+</databaseChangeLog>

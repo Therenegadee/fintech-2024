@@ -20,6 +20,7 @@ val caffeineCacheVersion = "3.1.8"
 val resilience4jCircuitBreakerVersion = "2.2.0"
 val resilience4jSpringVersion = "2.2.0"
 val springDocVersion = "2.6.0"
+val postgresqlVersion = "42.7.3"
 
 repositories {
     mavenCentral()
@@ -35,6 +36,13 @@ dependencies {
     }
     implementation("org.springframework.boot:spring-boot-starter-webflux")
 
+    // db
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.postgresql:postgresql:$postgresqlVersion")
+
+    // migrations
+    implementation("org.liquibase:liquibase-core:3.5.2")
+
     // aop
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation(project(":aop-starter"))
@@ -45,6 +53,7 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
     testImplementation("org.testcontainers:testcontainers:$testContainersVersion")
     testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation ("org.testcontainers:postgresql:$testContainersVersion")
     testImplementation("org.wiremock:wiremock-standalone:$wiremockStandaloneVersion")
     testImplementation("org.wiremock.integrations.testcontainers:wiremock-testcontainers-module:$wiremockTestcontainersVersion")
 
@@ -87,6 +96,10 @@ dependencies {
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+}
+
+tasks.jar {
+    exclude("db/changelog/**")
 }
 
 tasks.withType(JavaCompile::class) {
