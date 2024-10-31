@@ -2,9 +2,11 @@ package ru.tbank.datastructure;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.tbank.hw3.datastructure.CustomIterator;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class CustomLinkedList<T> {
     private Node<T> head;
@@ -94,6 +96,32 @@ public class CustomLinkedList<T> {
 
     public int size() {
         return size;
+    }
+
+    public CustomIterator<T> iterator() {
+        return new CustomLinkedListIterator();
+    }
+
+    private class CustomLinkedListIterator implements CustomIterator<T> {
+        private Node<T> current = head;
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public T next() {
+            T element = current.element;
+            current = current.next;
+            return element;
+        }
+
+        @Override
+        public void forEachRemaining(Consumer<? super T> action) {
+            while (hasNext()) {
+                action.accept(next());
+            }
+        }
     }
 
     @Getter

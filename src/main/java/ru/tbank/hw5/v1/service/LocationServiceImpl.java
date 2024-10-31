@@ -5,20 +5,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked;
 import ru.tbank.hw5.cache.LocationCache;
-import ru.tbank.hw5.client.KudaGoApiClient;
 import ru.tbank.hw5.dto.Location;
 import ru.tbank.hw5.exception.NotFoundException;
+import ru.tbank.hw5.observer.LocationUpdateObserver;
+import ru.tbank.hw5.observer.Observable;
+import ru.tbank.hw5.observer.Observer;
 import ru.tbank.hw5.service.LocationService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @MethodExecutionTimeTracked
 @Service
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class LocationServiceImpl implements LocationService {
 
-    private final KudaGoApiClient kudaGoApiClient;
     private final LocationCache locationCache;
 
     @Override
@@ -30,7 +32,7 @@ public class LocationServiceImpl implements LocationService {
     @Override
     public void saveAll(List<Location> locations) {
         log.info("Начало сохранения списка городов в кэш. Размер входного списка: {}.", locations.size());
-        locationCache.saveAll(locations);
+        locations.forEach(this::save);
         log.info("Список городов был успешно сохранен в кэш.");
     }
 

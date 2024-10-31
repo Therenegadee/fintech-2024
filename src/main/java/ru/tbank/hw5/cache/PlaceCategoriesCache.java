@@ -5,8 +5,14 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked;
+import ru.tbank.hw5.dto.Location;
 import ru.tbank.hw5.dto.PlaceCategory;
+import ru.tbank.hw5.observer.LocationUpdateObserver;
+import ru.tbank.hw5.observer.Observable;
+import ru.tbank.hw5.observer.Observer;
+import ru.tbank.hw5.observer.PlaceCategoryUpdateObserver;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -18,15 +24,37 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 @Getter
 @Setter
-public class PlaceCategoriesCache extends DataCache<PlaceCategory, Integer> {
+public class PlaceCategoriesCache extends DataCache<PlaceCategory, Integer> implements Observable<PlaceCategory> {
 
     protected final AtomicInteger idCounter = new AtomicInteger(1);
     private static final ReentrantLock LOCK = new ReentrantLock(true);
+    private final List<Observer<PlaceCategory>> observers = new ArrayList<>();
+
+    public PlaceCategoriesCache(PlaceCategoryUpdateObserver placeCategoryUpdateObserver) {
+        observers.add(placeCategoryUpdateObserver);
+    }
+
+    @Override
+    public void addObserver(Observer<PlaceCategory> observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer<PlaceCategory> observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(PlaceCategory entity) {
+        for (Observer<PlaceCategory> observer : observers) {
+            observer.update(entity);
+        }
+    }
 
     @Override
     public void saveAll(List<PlaceCategory> placeCategories) {
         log.info("Сохранение списка категорий мест в кэш.");
-        placeCategories.forEach(category -> cache.put(category.getId(), category));
+        placeCategories.forEach(this::save);
         log.info("Список категорий мест успешно сохранен в кэш.");
     }
 
@@ -57,6 +85,7 @@ public class PlaceCategoriesCache extends DataCache<PlaceCategory, Integer> {
             Integer savedId = idCounter.getAndIncrement();
             placeCategory.setId(savedId);
             cache.put(savedId, placeCategory);
+            notifyObservers(placeCategory);
             log.info("Категория места (slug: {}) была успешно сохранена в кэш с идентификатором: {}.",
                     placeCategory.getSlug(), savedId);
             return placeCategory;
@@ -76,8 +105,10 @@ public class PlaceCategoriesCache extends DataCache<PlaceCategory, Integer> {
                 throw new IllegalArgumentException(errorMessage);
             }
             PlaceCategory cachedPlaceCategory = cache.get(id);
+            notifyObservers(cachedPlaceCategory);
             cachedPlaceCategory.setName(updatedPlaceCategory.getName());
             cachedPlaceCategory.setSlug(updatedPlaceCategory.getSlug());
+            notifyObservers(cachedPlaceCategory);
             log.info("Категория места с идентификатором \"{}\" была успешно обновлена в кэше. Новые значения: (slug: {}, name: {})", id,
                     cachedPlaceCategory.getName(), cachedPlaceCategory.getSlug());
             return cachedPlaceCategory;
@@ -97,6 +128,7 @@ public class PlaceCategoriesCache extends DataCache<PlaceCategory, Integer> {
                 log.error(errorMessage);
                 throw new IllegalArgumentException(errorMessage);
             }
+            notifyObservers(cache.get(id));
             cache.remove(id);
             log.info("Категория места с идентификатором \"{}\" была успешно удалена из кэша.", id);
         } finally {

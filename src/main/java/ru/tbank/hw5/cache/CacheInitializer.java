@@ -9,6 +9,8 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import ru.tbank.aop.logging.starter.annotation.MethodExecutionTimeTracked;
 import ru.tbank.hw5.client.KudaGoApiClient;
+import ru.tbank.hw5.command.InitializeLocationCacheCommand;
+import ru.tbank.hw5.command.InitializePlaceCategoriesCacheCommand;
 import ru.tbank.hw5.dto.Location;
 import ru.tbank.hw5.dto.PlaceCategory;
 import ru.tbank.hw5.service.LocationService;
@@ -28,8 +30,10 @@ public class CacheInitializer {
     private final LocationService locationService;
     private final PlaceCategoryService placeCategoryService;
     private final KudaGoApiClient kudaGoApiClient;
+    private InitializeLocationCacheCommand initializeLocationCacheCommand;
+    private InitializePlaceCategoriesCacheCommand initializePlaceCategoriesCacheCommand;
 
-    @EventListener(ApplicationStartedEvent.class)
+//    @EventListener(ApplicationStartedEvent.class)
     protected List<Location> initLocationCache() {
         log.debug("Начало наполнения кэша городов из сервиса {}.", API_SERVICE_NAME);
         List<Location> locations = kudaGoApiClient.getAllLocations();
@@ -44,7 +48,7 @@ public class CacheInitializer {
         return locations;
     }
 
-    @EventListener(ApplicationStartedEvent.class)
+//    @EventListener(ApplicationStartedEvent.class)
     protected List<PlaceCategory> initPlaceCategoriesCache() {
         log.debug("Начало наполнения кэша категорий мест из сервиса {}.", API_SERVICE_NAME);
         List<PlaceCategory> placeCategories = kudaGoApiClient.getAllPlaceCategories();
@@ -57,5 +61,15 @@ public class CacheInitializer {
         log.debug("Кэш категорий мест из сервиса {} был успешно наполнен. Список полученных категорий мест содержал {} запись.",
                 API_SERVICE_NAME, placeCategories.size());
         return placeCategories;
+    }
+
+    @EventListener(ApplicationStartedEvent.class)
+    protected void initLocationCacheByCommand() {
+        initializeLocationCacheCommand.execute();
+    }
+
+    @EventListener(ApplicationStartedEvent.class)
+    protected void initPlaceCategoriesCacheByCommand() {
+        initializePlaceCategoriesCacheCommand.execute();;
     }
 }
