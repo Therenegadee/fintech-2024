@@ -92,6 +92,10 @@ public class CustomLinkedList<T> {
         return false;
     }
 
+    public boolean hasNext() {
+        return false;
+    }
+
     public int size() {
         return size;
     }
