@@ -21,6 +21,7 @@ val resilience4jCircuitBreakerVersion = "2.2.0"
 val resilience4jSpringVersion = "2.2.0"
 val springDocVersion = "2.6.0"
 val postgresqlVersion = "42.7.3"
+val jsonwebtokenVersion = "0.12.6"
 
 repositories {
     mavenCentral()
@@ -35,6 +36,12 @@ dependencies {
         exclude(mapOf("group" to "org.junit.vintage", "module" to "junit-vintage-engine"))
     }
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+    // security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("io.jsonwebtoken:jjwt-api:$jsonwebtokenVersion")
+    implementation("io.jsonwebtoken:jjwt-impl:$jsonwebtokenVersion")
+    implementation("io.jsonwebtoken:jjwt-jackson:$jsonwebtokenVersion")
 
     // db
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")

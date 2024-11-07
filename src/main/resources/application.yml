@@ -24,6 +24,7 @@ spring:
 logging:
   level:
     root: info
+    org.springframework.security: DEBUG
     org.hibernate:
       SQL: debug
       type.descriptor.sql.BasicBinder: warn
@@ -81,3 +82,8 @@ management:
   health:
     circuitbreakers:
       enabled: true
+
+security:
+  jwt:
+    secret: 6c112c14b1e753b71df3d7abd3c3ad0b31f43c3ab8f4595d70fbedd7ed76bb3b24c59409910a21bf363339ab58434f800beb489ab570f6ce15b7be41c6d56eb5
+    expiration-time: 2592000000 # 30d

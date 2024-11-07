@@ -8,4 +8,9 @@
     <include file="2024-10-23--01-init-service-schema.sql" relativeToChangelogFile="true"/>
     <include file="2024-10-23--02-init-places-table.sql" relativeToChangelogFile="true"/>
     <include file="2024-10-23--03-init-events-table.sql" relativeToChangelogFile="true"/>
+    <include file="2024-11-05--01-init-users-schema.sql" relativeToChangelogFile="true"/>
+    <include file="2024-11-05--02-init-user-table.sql" relativeToChangelogFile="true"/>
+    <include file="2024-11-05--03-init-role-table.sql" relativeToChangelogFile="true"/>
+    <include file="2024-11-05--04-init-user-roles-table.sql" relativeToChangelogFile="true"/>
+    <include file="2024-11-05--05-init-token-table.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>
