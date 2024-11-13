@@ -1,7 +1,53 @@
 server:
   port: 8080
 
+spring:
+  application:
+    name: homework-app
+  cache:
+    cache-names: currencies-rates
+    caffeine:
+      spec: expireAfterAccess=1h
+
 kudago-api:
   base-url: "https://kudago.com/public-api/v1.4"
   categories-path: "/place-categories"
   locations-path: "/locations"
+
+cbr-api:
+  base-url: http://www.cbr.ru
+  currency:
+    codes:
+      path: /scripts/XML_valFull.asp
+    daily-exchange-rates:
+      path: /scripts/XML_daily.asp
+      date-param: date_req
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        failureRateThreshold: 60
+        minimumNumberOfCalls: 5
+        registerHealthIndicator: true
+        permittedNumberOfCallsInHalfOpenState: 10
+    instances:
+      central-bank-client:
+        baseConfig: default
+        waitDurationInOpenState: 20s
+
+management:
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      enabled: true
+      show-details: "ALWAYS"
+  health:
+    circuitbreakers:
+      enabled: true
