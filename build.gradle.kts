@@ -1,7 +1,10 @@
+import org.gradle.internal.impldep.org.eclipse.jgit.lib.ObjectChecker.type
+
 plugins {
     id("org.springframework.boot") version "3.3.3"
     id("java")
     jacoco
+    id("me.champeau.jmh") version "0.7.2"
 }
 
 group = "ru.tbank"
@@ -22,7 +25,13 @@ val resilience4jSpringVersion = "2.2.0"
 val springDocVersion = "2.6.0"
 
 repositories {
+    gradlePluginPortal()
     mavenCentral()
+}
+
+jmh {
+    fork = 1
+    jvmArgs.add("-Djmh.ignoreLock=true")
 }
 
 dependencies {
@@ -78,6 +87,17 @@ dependencies {
 
     // metrics
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+
+    // jmh
+    jmh("commons-io:commons-io:2.7")
+    implementation("org.openjdk.jmh:jmh-core:1.37")
+    implementation("org.openjdk.jmh:jmh-generator-annprocess:1.37")
+
+    // kafka
+    implementation("org.apache.kafka:kafka-clients:3.9.0")
+
+    // rabbit
+    implementation("com.rabbitmq:amqp-client:5.14.2")
 }
 
 tasks.getByName<Test>("test") {
