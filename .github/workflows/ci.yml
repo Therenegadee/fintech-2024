@@ -47,11 +47,24 @@ jobs:
         with:
           token: ${{ secrets.TC_CLOUD_TOKEN }}
 
-      - name: Upload JaCoCo test coverage report
-        uses: actions/upload-artifact@v3
+      - name: Run Coverage
+        run: |
+          chmod +x gradlew
+          ./gradlew jacocoTestReport
+
+      - name: Check if Jacoco report exists
+        run: |
+            ls -R build/reports/jacoco
+
+      - name: Upload Jacoco Coverage Report
+        uses: madrapps/jacoco-report@v1.7.1
         with:
-          name: jacoco-report
-          path: ${{ github.workspace }}/build/reports/jacoco/test
+          paths: ${{ github.workspace }}/build/reports/jacoco/test/index.html
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 75
+          min-coverage-changed-files: 30
+          title: Code Coverage
+          update-comment: true
 
       - name: Run static code analysis
         run: ./gradlew check
