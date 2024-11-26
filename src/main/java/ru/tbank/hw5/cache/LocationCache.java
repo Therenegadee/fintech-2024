@@ -70,16 +70,15 @@ public class LocationCache extends DataCache<Location, String> {
         try {
             LOCK.lock();
             if (!cache.containsKey(slug)) {
-                String errorMessage = String.format("Города со slug \"{}\" не существует в кэше!", slug);
+                String errorMessage = String.format("Города со slug \"%s\" не существует в кэше!", slug);
                 log.error(errorMessage);
                 throw new IllegalArgumentException(errorMessage);
             }
             Location cachedLocation = cache.get(slug);
             cachedLocation.setName(updatedLocation.getName());
             cachedLocation.setSlug(updatedLocation.getSlug());
-            log.info("Город со slug  \"{}\" был успешно обновлен в кэше. Новые значения: (name: {})", slug,
+            log.info("Город со slug \"{}\" был успешно обновлен в кэше. Новые значения: (name: {})", slug,
                     cachedLocation.getName());
-            LOCK.unlock();
             return cachedLocation;
         } finally {
             LOCK.unlock();
