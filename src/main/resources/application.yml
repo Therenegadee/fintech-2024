@@ -51,3 +51,7 @@ management:
   health:
     circuitbreakers:
       enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true

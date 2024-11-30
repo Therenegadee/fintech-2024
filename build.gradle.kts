@@ -34,6 +34,14 @@ dependencies {
         exclude(mapOf("group" to "org.junit.vintage", "module" to "junit-vintage-engine"))
     }
 
+    // metrics
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.14.1")
+
+    // logstash
+    implementation ("net.logstash.logback:logstash-logback-encoder:7.4")
+    implementation ("ch.qos.logback:logback-classic:*")
+
     // aop
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation(project(":aop-starter"))
@@ -75,9 +83,6 @@ dependencies {
 
     // springdoc
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
-
-    // metrics
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
 }
 
 tasks.getByName<Test>("test") {
