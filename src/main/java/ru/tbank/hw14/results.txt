@@ -1,0 +1,13 @@
+Benchmark                                                                                       Mode  Cnt    Score     Error  Units
+r.t.h.kafka.benchmarks.KafkaLoadBalancingBenchmark.benchmarkProduceConsumer                      thrpt    3  207,910 ± 833,862  ops/s
+r.t.h.kafka.benchmarks.KafkaLoadBalancingProducerAllNodesAcksBenchmark.benchmarkProduceConsumer  thrpt    3    4,803 ±   0,283  ops/s
+r.t.h.kafka.benchmarks.KafkaMultipleConsumersBenchmark.benchmarkProduceConsumer                  thrpt    3    4,718 ±   0,077  ops/s
+r.t.h.kafka.benchmarks.KafkaMultipleConsumersLoadBalancingBenchmark.benchmarkProduceConsumer     thrpt    3    4,823 ±   0,056  ops/s
+r.t.h.kafka.benchmarks.KafkaSimpleBenchmark.benchmarkProduceConsumer                             thrpt    3  393,460 ± 742,992  ops/s
+r.t.h.kafka.benchmarks.KafkaStressBenchmark.benchmarkProduceConsumer                             thrpt    3    1,073 ±   0,084  ops/s
+r.t.h.rabbit.benchmarks.RabbitLoadBalancingBenchmark.benchmarkProduceConsumer                    thrpt    3    6,194 ±   0,090  ops/s
+r.t.h.rabbit.benchmarks.RabbitMqLoadBalancingWaitConfirmationBenchmark.benchmarkProduceConsumer  thrpt    3   74,498 ± 204,728  ops/s
+r.t.h.rabbit.benchmarks.RabbitMultipleConsumersBenchmark.benchmarkProduceConsumer                thrpt    3   15,413 ±   5,524  ops/s
+r.t.h.rabbit.benchmarks.RabbitMultipleConsumersLoadBalancingBenchmark.benchmarkProduceConsumer   thrpt    3    5,714 ±   0,597  ops/s
+r.t.h.rabbit.benchmarks.RabbitSimpleBenchmark.benchmarkProduceConsumer                           thrpt    3   17,188 ±   0,841  ops/s
+r.t.h.rabbit.benchmarks.RabbitStressBenchmark.benchmarkProduceConsumer                           thrpt    3    1,732 ±   0,284  ops/s
